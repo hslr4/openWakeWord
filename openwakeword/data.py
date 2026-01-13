@@ -672,12 +672,11 @@ def augment_clips(
         augmented_clips = []
         for clip in batch:
             clip_data, clip_sr = torchaudio.load(clip)
+            if clip_sr != sr:
+                clip_data = torchaudio.functional.resample(clip_data, orig_freq=clip_sr, new_freq=sr)
             clip_data = clip_data[0]
             if clip_data.shape[0] > total_length:
                 clip_data = clip_data[0:total_length]
-
-            if clip_sr != sr:
-                raise ValueError("Error! Clip does not have the correct sample rate!")
 
             clip_data = create_fixed_size_clip(clip_data, total_length, clip_sr)
 
